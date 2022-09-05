@@ -7,4 +7,3 @@ const db = new Client("postgresql:///lunchly");
 db.connect();
 
 export default db;
-//module.exports = db;
