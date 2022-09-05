@@ -1,44 +1,57 @@
 /** Reservation for Lunchly */
 
-const moment = require("moment");
+import moment from "moment";
 
-const db = require("../db");
-
+import db from "../db";
+//const db = require("../db");
 
 /** A reservation for a party */
 
+interface ReservationData {
+  id?: number;
+  customerId: number;
+  numGuests: number;
+  startAt?: Date;
+  notes: string;
+}
+
 class Reservation {
-  constructor({id, customerId, numGuests, startAt, notes}) {
-    this.id = id;
-    this.customerId = customerId;
-    this.numGuests = numGuests;
-    this.startAt = startAt;
-    this.notes = notes;
+  id?: number;
+  customerId: number;
+  numGuests: number;
+  startAt?: Date;
+  notes: string;
+
+  constructor(data: ReservationData) {
+    this.id = data.id;
+    this.customerId = data.customerId;
+    this.numGuests = data.numGuests;
+    this.startAt = data.startAt;
+    this.notes = data.notes;
   }
 
   /** formatter for startAt */
 
-  getformattedStartAt() {
-    return moment(this.startAt).format('MMMM Do YYYY, h:mm a');
+  getformattedStartAt(): string {
+    return moment(this.startAt).format("MMMM Do YYYY, h:mm a");
   }
 
   /** given a customer id, find their reservations. */
 
-  static async getReservationsForCustomer(customerId) {
+  static async getReservationsForCustomer(customerId: number) {
     const results = await db.query(
-          `SELECT id, 
+      `SELECT id,
            customer_id AS "customerId", 
            num_guests AS "numGuests", 
            start_at AS "startAt", 
            notes AS "notes"
          FROM reservations 
          WHERE customer_id = $1`,
-        [customerId]
+      [customerId]
     );
 
-    return results.rows.map(row => new Reservation(row));
+    return results.rows.map((row) => new Reservation(row));
   }
 }
 
-
-module.exports = Reservation;
+export default Reservation;

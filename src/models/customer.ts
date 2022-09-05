@@ -1,17 +1,31 @@
 /** Customer for Lunchly */
 
-const db = require("../db");
-const Reservation = require("./reservation");
+import db from "../db";
+import Reservation from "./reservation";
 
 /** Customer of the restaurant. */
 
+interface CustomerData {
+  id?: number;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  notes: string;
+}
+
 class Customer {
-  constructor({ id, firstName, lastName, phone, notes }) {
-    this.id = id;
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.phone = phone;
-    this.notes = notes;
+  id?: number;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  notes: string;
+
+  constructor(data: CustomerData) {
+    this.id = data.id;
+    this.firstName = data.firstName;
+    this.lastName = data.lastName;
+    this.phone = data.phone;
+    this.notes = data.notes;
   }
 
   /** find all customers. */
@@ -31,7 +45,7 @@ class Customer {
 
   /** get a customer by ID. */
 
-  static async get(id) {
+  static async get(id: number) {
     const results = await db.query(
       `SELECT id, 
          first_name AS "firstName",  
@@ -45,8 +59,7 @@ class Customer {
     const customer = results.rows[0];
 
     if (customer === undefined) {
-      const err = new Error(`No such customer: ${id}`);
-      err.status = 404;
+      const err = new ExpressError(`No such customer: ${id}`, 404);
       throw err;
     }
 
@@ -56,7 +69,7 @@ class Customer {
   /** get all reservations for this customer. */
 
   async getReservations() {
-    return await Reservation.getReservationsForCustomer(this.id);
+    return await Reservation.getReservationsForCustomer(this.id as number);
   }
 
   /** save this customer. */
@@ -80,4 +93,4 @@ class Customer {
   }
 }
 
-module.exports = Customer;
+export default Customer;

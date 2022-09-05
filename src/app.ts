@@ -1,8 +1,8 @@
 /** Express app for Lunchly. */
 
-const express = require("express");
-const nunjucks = require("nunjucks");
-const bodyParser = require("body-parser");
+import express, { NextFunction } from "express";
+import nunjucks from "nunjucks";
+import bodyParser from "body-parser";
 const routes = require("./routes");
 
 const app = express();
@@ -19,9 +19,8 @@ app.use(routes);
 
 /** 404 handler */
 
-app.use(function(req, res, next) {
-  const err = new Error("Not Found");
-  err.status = 404;
+app.use(function (req, res, next) {
+  const err = new ExpressError("Not Found", 404);
 
   // pass the error to the next piece of middleware
   return next(err);
@@ -29,7 +28,7 @@ app.use(function(req, res, next) {
 
 /** general error handler */
 
-app.use((err, req, res, next) => {
+app.use((err: ExpressError, req: any, res: any, next: NextFunction) => {
   res.status(err.status || 500);
 
   return res.render("error.html", { err });

@@ -1,9 +1,10 @@
 /** Database for lunchly */
 
-const pg = require("pg");
+import { Client } from "pg";
 
-const db = new pg.Client("postgresql:///lunchly");
+const db = new Client("postgresql:///lunchly");
 
 db.connect();
 
-module.exports = db;
+export default db;
+//module.exports = db;
